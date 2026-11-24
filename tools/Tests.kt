@@ -358,6 +358,22 @@ fun main() {
         check("keke moved one tile", ks == listOf(3))
     }
 
+    // 34. direction vectors and a real left/right move are not swapped
+    run {
+        check("LEFT points left", Dir.LEFT.dx == -1 && Dir.LEFT.dy == 0)
+        check("RIGHT points right", Dir.RIGHT.dx == 1 && Dir.RIGHT.dy == 0)
+        check("UP points up", Dir.UP.dy == -1)
+        check("DOWN points down", Dir.DOWN.dy == 1)
+
+        val s = board("THING . . .", "^THING ^IS ^YOU")
+        var cur = Engine.step(s, Dir.LEFT).state
+        check("blocked at the left edge", cur.items.first { !it.isText && it.word == Word.THING }.x == 0)
+        cur = Engine.step(cur, Dir.RIGHT).state
+        check("RIGHT moves right", cur.items.first { !it.isText && it.word == Word.THING }.x == 1)
+        cur = Engine.step(cur, Dir.LEFT).state
+        check("LEFT moves back left", cur.items.first { !it.isText && it.word == Word.THING }.x == 0)
+    }
+
     println("----")
     println("passes=$passes failures=$failures")
     if (failures > 0) throw IllegalStateException("$failures test(s) failed")

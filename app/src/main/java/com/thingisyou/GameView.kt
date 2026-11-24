@@ -24,6 +24,10 @@ import kotlin.math.sin
 /**
  * Draws one puzzle and nothing else. All art is flat vector work done in code, so the
  * app ships no image assets.
+ *
+ * Everything is drawn at whole grid cells. There is deliberately no slide animation:
+ * a half-finished tween leaves a piece sitting on a grid line, which looks like the
+ * piece moved the wrong way. A tile is either in one cell or the next.
  */
 class GameView @JvmOverloads constructor(
     context: Context,
@@ -40,9 +44,6 @@ class GameView @JvmOverloads constructor(
     var onEnd: ((Boolean) -> Unit)? = null
 
     private var state: State = State(1, 1, emptyList())
-    private val sources = ArrayList<IntArray>()
-    private var animStart = 0L
-    private val animDurMs = 110f
 
     private var cell = 0f
     private var ox = 0f
@@ -63,68 +64,19 @@ class GameView @JvmOverloads constructor(
     private val path = Path()
     private val rect = RectF()
 
-    init {
-        setLayerType(LAYER_TYPE_HARDWARE, null)
-    }
-
     // ------------------------------------------------------------------ binding
 
     fun bind(s: GameSession) {
         session = s
         state = s.state
-        sources.clear()
-        for (item in state.items) sources.add(intArrayOf(item.x, item.y))
         layoutBoard()
         invalidate()
     }
 
     fun refresh(animate: Boolean) {
         val s = session ?: return
-        apply(s.state, animate)
+        state = s.state
         layoutBoard()
-    }
-
-    private fun apply(newState: State, animate: Boolean) {
-        val old = state
-        sources.clear()
-        if (animate && old.w == newState.w && old.h == newState.h) {
-            val used = BooleanArray(old.items.size)
-            // First lock in everything that stayed put, then match one-tile moves.
-            val src = arrayOfNulls<IntArray>(newState.items.size)
-            for (i in newState.items.indices) {
-                val item = newState.items[i]
-                for (j in old.items.indices) {
-                    if (used[j]) continue
-                    val o = old.items[j]
-                    if (o.word == item.word && o.isText == item.isText && o.x == item.x && o.y == item.y) {
-                        used[j] = true
-                        src[i] = intArrayOf(o.x, o.y)
-                        break
-                    }
-                }
-            }
-            for (i in newState.items.indices) {
-                if (src[i] != null) continue
-                val item = newState.items[i]
-                for (j in old.items.indices) {
-                    if (used[j]) continue
-                    val o = old.items[j]
-                    if (o.word != item.word || o.isText != item.isText) continue
-                    if (abs(o.x - item.x) + abs(o.y - item.y) <= 1) {
-                        used[j] = true
-                        src[i] = intArrayOf(o.x, o.y)
-                        break
-                    }
-                }
-            }
-            for (i in newState.items.indices) {
-                sources.add(src[i] ?: intArrayOf(newState.items[i].x, newState.items[i].y))
-            }
-        } else {
-            for (item in newState.items) sources.add(intArrayOf(item.x, item.y))
-        }
-        state = newState
-        animStart = System.currentTimeMillis()
         invalidate()
     }
 
@@ -140,6 +92,7 @@ class GameView @JvmOverloads constructor(
         val pad = 10f * density
         val availW = width - pad * 2
         val availH = height - pad * 2
+        if (availW <= 0 || availH <= 0) return
         cell = min(availW / state.w, availH / state.h)
         ox = (width - cell * state.w) / 2f
         oy = (height - cell * state.h) / 2f
@@ -178,6 +131,7 @@ class GameView @JvmOverloads constructor(
                 performClick()
                 return true
             }
+            MotionEvent.ACTION_CANCEL -> gestureConsumed = true
         }
         return super.onTouchEvent(e)
     }
@@ -198,7 +152,8 @@ class GameView @JvmOverloads constructor(
         val s = session ?: return
         if (s.won || s.lost) return
         val events = s.step(dir)
-        apply(s.state, true)
+        state = s.state
+        invalidate()
         if (events.isNotEmpty()) onEvents?.invoke(events)
         if (s.won) onEnd?.invoke(true)
         else if (s.lost) onEnd?.invoke(false)
@@ -209,9 +164,7 @@ class GameView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (cell <= 0f) layoutBoard()
-
-        val t = ((System.currentTimeMillis() - animStart) / animDurMs).coerceIn(0f, 1f)
-        val ease = 1f - (1f - t) * (1f - t)
+        if (cell <= 0f) return
 
         // board plate
         tilePaint.color = 0xFF171A22.toInt()
@@ -230,15 +183,12 @@ class GameView @JvmOverloads constructor(
             canvas.drawLine(ox, py, ox + cell * state.w, py, gridPaint)
         }
 
-        // items, terrain first
+        // items, terrain first, each locked to the centre of its own cell
         val order = state.items.indices.sortedBy { zOrder(state.items[it]) }
         for (i in order) {
             val item = state.items[i]
-            val src = sources.getOrNull(i)
-            val fx = if (src != null) src[0] + (item.x - src[0]) * ease else item.x.toFloat()
-            val fy = if (src != null) src[1] + (item.y - src[1]) * ease else item.y.toFloat()
-            val cx = ox + (fx + 0.5f) * cell
-            val cy = oy + (fy + 0.5f) * cell
+            val cx = ox + (item.x + 0.5f) * cell
+            val cy = oy + (item.y + 0.5f) * cell
             if (item.isText) drawWordTile(canvas, item.word, cx, cy, cell)
             else drawObject(canvas, item.word, cx, cy, cell)
         }
@@ -462,7 +412,6 @@ class GameView @JvmOverloads constructor(
     private fun drawCreature(canvas: Canvas, cx: Float, cy: Float, s: Float, body: Int, ink: Int) {
         fill.color = body
         val r = s * 0.36f
-        // ears
         canvas.drawCircle(cx - r * 0.72f, cy - r * 0.78f, r * 0.30f, fill)
         canvas.drawCircle(cx + r * 0.72f, cy - r * 0.78f, r * 0.30f, fill)
         rect.set(cx - r, cy - r, cx + r, cy + r)

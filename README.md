@@ -38,6 +38,8 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
   long drag will not run away from you.
 - **Arrow pad** at the bottom of the screen moves one tile per tap. Use this when you want
   to be certain of a single step.
+- Movement snaps from tile to tile. There is no sliding animation, so a piece is never
+  drawn straddling a grid line or part-way between cells.
 - **UNDO** steps back one move, all the way to the start.
 - **RESET** returns the puzzle to its opening position.
 - **BACK** leaves the puzzle for the level list.
