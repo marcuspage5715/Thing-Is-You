@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import com.thingisyou.engine.Dir
 import com.thingisyou.engine.GameSession
 import com.thingisyou.engine.LevelDef
 import com.thingisyou.engine.Levels
@@ -32,6 +33,11 @@ class GameActivity : Activity() {
         view.onEnd = { won -> showOverlay(won) }
 
         findViewById<TextView>(R.id.levelName).text = "${level.id}   ${level.name}"
+
+        findViewById<Button>(R.id.btnUp).setOnClickListener { view.move(Dir.UP) }
+        findViewById<Button>(R.id.btnDown).setOnClickListener { view.move(Dir.DOWN) }
+        findViewById<Button>(R.id.btnLeft).setOnClickListener { view.move(Dir.LEFT) }
+        findViewById<Button>(R.id.btnRight).setOnClickListener { view.move(Dir.RIGHT) }
 
         findViewById<Button>(R.id.btnBack).setOnClickListener {
             Sfx.click()

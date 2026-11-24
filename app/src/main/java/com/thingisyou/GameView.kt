@@ -58,7 +58,7 @@ class GameView @JvmOverloads constructor(
     private val density = resources.displayMetrics.density
     private var downX = 0f
     private var downY = 0f
-    private var dragStep = 0f
+    private var gestureConsumed = false
 
     private val path = Path()
     private val rect = RectF()
@@ -152,35 +152,28 @@ class GameView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 downX = e.x
                 downY = e.y
-                dragStep = maxOf(24f * density, cell * 0.55f)
+                gestureConsumed = false
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
+                // One move per gesture. Firing again mid-drag made the board lurch and made
+                // short swipes feel like they were being swallowed.
+                if (gestureConsumed) return true
                 val dx = e.x - downX
                 val dy = e.y - downY
-                if (abs(dx) >= dragStep || abs(dy) >= dragStep) {
-                    val dir = if (abs(dx) > abs(dy)) {
-                        if (dx > 0) Dir.RIGHT else Dir.LEFT
-                    } else {
-                        if (dy > 0) Dir.DOWN else Dir.UP
-                    }
-                    downX = e.x
-                    downY = e.y
-                    move(dir)
+                val thresh = maxOf(18f * density, cell * 0.28f)
+                if (abs(dx) >= thresh || abs(dy) >= thresh) {
+                    gestureConsumed = true
+                    move(directionOf(dx, dy))
                 }
                 return true
             }
             MotionEvent.ACTION_UP -> {
-                val dx = e.x - downX
-                val dy = e.y - downY
-                val thresh = maxOf(18f * density, cell * 0.35f)
-                if (abs(dx) > thresh || abs(dy) > thresh) {
-                    val dir = if (abs(dx) > abs(dy)) {
-                        if (dx > 0) Dir.RIGHT else Dir.LEFT
-                    } else {
-                        if (dy > 0) Dir.DOWN else Dir.UP
-                    }
-                    move(dir)
+                if (!gestureConsumed) {
+                    val dx = e.x - downX
+                    val dy = e.y - downY
+                    val thresh = maxOf(12f * density, cell * 0.18f)
+                    if (abs(dx) > thresh || abs(dy) > thresh) move(directionOf(dx, dy))
                 }
                 performClick()
                 return true
@@ -188,6 +181,13 @@ class GameView @JvmOverloads constructor(
         }
         return super.onTouchEvent(e)
     }
+
+    private fun directionOf(dx: Float, dy: Float): Dir =
+        if (abs(dx) > abs(dy)) {
+            if (dx > 0) Dir.RIGHT else Dir.LEFT
+        } else {
+            if (dy > 0) Dir.DOWN else Dir.UP
+        }
 
     override fun performClick(): Boolean {
         super.performClick()
@@ -293,8 +293,8 @@ class GameView @JvmOverloads constructor(
     private fun drawObject(canvas: Canvas, word: Word, cx: Float, cy: Float, size: Float) {
         val s = size
         when (word) {
-            Word.BABA -> drawCreature(canvas, cx, cy, s, 0xFFF4F6FA.toInt(), 0xFF2A2E3A.toInt())
-            Word.KEKE -> drawCreature(canvas, cx, cy, s, 0xFFE8686B.toInt(), 0xFF2A2E3A.toInt())
+            Word.THING -> drawCreature(canvas, cx, cy, s, 0xFFF4F6FA.toInt(), 0xFF2A2E3A.toInt())
+            Word.PIP -> drawCreature(canvas, cx, cy, s, 0xFFE8686B.toInt(), 0xFF2A2E3A.toInt())
 
             Word.WALL -> {
                 fill.color = 0xFF3E4350.toInt()

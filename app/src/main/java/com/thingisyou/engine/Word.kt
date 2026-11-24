@@ -12,8 +12,8 @@ enum class WordKind { NOUN, PROP, VERB, OP }
  */
 enum class Word(val label: String, val kind: WordKind) {
     // ---- nouns (objects) ----
-    BABA("BABA", WordKind.NOUN),
-    KEKE("KEKE", WordKind.NOUN),
+    THING("THING", WordKind.NOUN),
+    PIP("PIP", WordKind.NOUN),
     FLAG("FLAG", WordKind.NOUN),
     WALL("WALL", WordKind.NOUN),
     ROCK("ROCK", WordKind.NOUN),

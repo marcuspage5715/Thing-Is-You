@@ -18,15 +18,15 @@ fun run(s: State, vararg dirs: Dir): State {
     return cur
 }
 
-fun baba(s: State): Item? = s.items.firstOrNull { !it.isText && it.word == Word.BABA }
+fun baba(s: State): Item? = s.items.firstOrNull { !it.isText && it.word == Word.THING }
 
 fun main() {
 
     // 1. STOP blocks movement, always
     run {
         val s = board(
-            "BABA ^IS",
-            "^BABA .",
+            "THING ^IS",
+            "^THING .",
             "^IS .",
             "^YOU ."
         )
@@ -37,8 +37,8 @@ fun main() {
     // 2. push chain blocked by STOP leaves everything in place
     run {
         val s = board(
-            "BABA ROCK WALL .",
-            "^BABA ^IS ^YOU . .",
+            "THING ROCK WALL .",
+            "^THING ^IS ^YOU . .",
             "^ROCK ^IS ^PUSH . .",
             "^WALL ^IS ^STOP . ."
         )
@@ -50,8 +50,8 @@ fun main() {
     // 3. push chain that fits moves every link
     run {
         val s = board(
-            "BABA ROCK ROCK . .",
-            "^BABA ^IS ^YOU . .",
+            "THING ROCK ROCK . .",
+            "^THING ^IS ^YOU . .",
             "^ROCK ^IS ^PUSH . ."
         )
         val after = run(s, Dir.RIGHT)
@@ -62,8 +62,8 @@ fun main() {
     // 4. word tiles are pushable without any rule
     run {
         val s = board(
-            "BABA ^IS . .",
-            "^BABA ^IS ^YOU"
+            "THING ^IS . .",
+            "^THING ^IS ^YOU"
         )
         val after = run(s, Dir.RIGHT)
         check("text is pushed", after.firstTextAt(2, 0) == Word.IS)
@@ -72,11 +72,11 @@ fun main() {
     // 5. pushing the STOP word out of a sentence frees the wall
     run {
         val s = board(
-            "^BABA ^IS ^YOU . .",
+            "^THING ^IS ^YOU . .",
             ". . . . .",
             "^WALL ^IS ^STOP . .",
             ". . . . .",
-            "BABA . WALL . ."
+            "THING . WALL . ."
         )
         check("wall stops baba at first", Rules.evaluate(s).props.any { Prop.STOP in it })
         var cur = run(s, Dir.UP, Dir.RIGHT, Dir.RIGHT)
@@ -91,7 +91,7 @@ fun main() {
 
     // 6. AND
     run {
-        val rs = Rules.evaluate(board("^BABA ^IS ^YOU ^AND ^WIN"))
+        val rs = Rules.evaluate(board("^THING ^IS ^YOU ^AND ^WIN"))
         check("AND grants both properties", rs.rules.size == 1 && rs.rules[0].objects.size == 2)
     }
 
@@ -104,8 +104,8 @@ fun main() {
     // 8. transformation runs
     run {
         val s = board(
-            "BABA ROCK .",
-            "^BABA ^IS ^YOU .",
+            "THING ROCK .",
+            "^THING ^IS ^YOU .",
             "^ROCK ^IS ^FLAG ."
         )
         val out = Engine.step(s, Dir.DOWN)
@@ -116,10 +116,10 @@ fun main() {
     // 9. A IS A freezes A
     run {
         val s = board(
-            "ROCK BABA .",
+            "ROCK THING .",
             "^ROCK ^IS ^FLAG .",
             "^ROCK ^IS ^ROCK .",
-            "^BABA ^IS ^YOU ."
+            "^THING ^IS ^YOU ."
         )
         val out = Engine.step(s, Dir.DOWN)
         check("A IS A blocks transformation", out.state.items.any { !it.isText && it.word == Word.ROCK })
@@ -128,42 +128,42 @@ fun main() {
     // 10. SINK: two sink objects annihilate
     run {
         val s = board(
-            "BABA ROCK .",
-            "^BABA ^IS ^YOU ^AND ^SINK",
+            "THING ROCK .",
+            "^THING ^IS ^YOU ^AND ^SINK",
             "^ROCK ^IS ^SINK"
         )
         val out = Engine.step(s, Dir.RIGHT)
-        check("sink: baba and rock both gone", out.state.items.none { !it.isText && (it.word == Word.BABA || it.word == Word.ROCK) })
+        check("sink: baba and rock both gone", out.state.items.none { !it.isText && (it.word == Word.THING || it.word == Word.ROCK) })
     }
 
     // 11. SINK: a sink tile swallows a non-floating thing but stays
     run {
         val s = board(
-            "BABA WATER .",
-            "^BABA ^IS ^YOU .",
+            "THING WATER .",
+            "^THING ^IS ^YOU .",
             "^WATER ^IS ^SINK ."
         )
         val out = Engine.step(s, Dir.RIGHT)
-        check("sink: baba drowns", out.state.items.none { !it.isText && it.word == Word.BABA })
+        check("sink: baba drowns", out.state.items.none { !it.isText && it.word == Word.THING })
         check("sink: water tile survives", out.state.items.any { !it.isText && it.word == Word.WATER })
     }
 
     // 12. FLOAT saves you from sinking
     run {
         val s = board(
-            "BABA WATER .",
-            "^BABA ^IS ^YOU ^AND ^FLOAT",
+            "THING WATER .",
+            "^THING ^IS ^YOU ^AND ^FLOAT",
             "^WATER ^IS ^SINK"
         )
         val out = Engine.step(s, Dir.RIGHT)
-        check("FLOAT: baba survives water", out.state.items.any { !it.isText && it.word == Word.BABA })
+        check("FLOAT: baba survives water", out.state.items.any { !it.isText && it.word == Word.THING })
     }
 
     // 13. MELT / HOT
     run {
         val s = board(
-            "BABA ICE LAVA .",
-            "^BABA ^IS ^YOU . .",
+            "THING ICE LAVA .",
+            "^THING ^IS ^YOU . .",
             "^ICE ^IS ^PUSH ^AND ^MELT",
             "^LAVA ^IS ^HOT"
         )
@@ -173,24 +173,24 @@ fun main() {
 
     // 14. ON modifier
     run {
-        val s = board("BABA+GRASS . .", "^BABA ^ON ^GRASS ^IS ^YOU")
+        val s = board("THING+GRASS . .", "^THING ^ON ^GRASS ^IS ^YOU")
         check("ON grants YOU while standing on it", Rules.evaluate(s).hasYou)
-        val s2 = board("BABA . GRASS", "^BABA ^ON ^GRASS ^IS ^YOU")
+        val s2 = board("THING . GRASS", "^THING ^ON ^GRASS ^IS ^YOU")
         check("ON does not grant YOU off it", !Rules.evaluate(s2).hasYou)
     }
 
     // 15. FACING modifier
     run {
-        check("FACING grants YOU", Rules.evaluate(board("BABA> FLAG .", "^BABA ^FACING ^FLAG ^IS ^YOU")).hasYou)
-        check("FACING wrong way does not", !Rules.evaluate(board("BABA< FLAG .", "^BABA ^FACING ^FLAG ^IS ^YOU")).hasYou)
+        check("FACING grants YOU", Rules.evaluate(board("THING> FLAG .", "^THING ^FACING ^FLAG ^IS ^YOU")).hasYou)
+        check("FACING wrong way does not", !Rules.evaluate(board("THING< FLAG .", "^THING ^FACING ^FLAG ^IS ^YOU")).hasYou)
     }
 
     // 16. HAS leaves something behind when destroyed
     run {
         val s = board(
-            "BABA ROCK .",
-            "^BABA ^IS ^YOU .",
-            "^BABA ^HAS ^FLAG .",
+            "THING ROCK .",
+            "^THING ^IS ^YOU .",
+            "^THING ^HAS ^FLAG .",
             "^ROCK ^IS ^SINK ."
         )
         val out = Engine.step(s, Dir.RIGHT)
@@ -200,9 +200,9 @@ fun main() {
     // 17. MAKE replaces on destruction
     run {
         val s = board(
-            "BABA ROCK .",
-            "^BABA ^IS ^YOU .",
-            "^BABA ^MAKE ^STAR .",
+            "THING ROCK .",
+            "^THING ^IS ^YOU .",
+            "^THING ^MAKE ^STAR .",
             "^ROCK ^IS ^SINK ."
         )
         val out = Engine.step(s, Dir.RIGHT)
@@ -212,9 +212,9 @@ fun main() {
     // 18. MOVE object advances on its own
     run {
         val s = board(
-            "BABA . . .",
+            "THING . . .",
             "ROCK> . . .",
-            "^BABA ^IS ^YOU",
+            "^THING ^IS ^YOU",
             "^ROCK ^IS ^MOVE"
         )
         val out = Engine.step(s, Dir.DOWN)
@@ -224,9 +224,9 @@ fun main() {
     // 19. MOVE object is blocked by STOP
     run {
         val s = board(
-            "BABA . . .",
+            "THING . . .",
             "ROCK> WALL . .",
-            "^BABA ^IS ^YOU",
+            "^THING ^IS ^YOU",
             "^ROCK ^IS ^MOVE",
             "^WALL ^IS ^STOP"
         )
@@ -237,8 +237,8 @@ fun main() {
     // 20. TELE
     run {
         val s = board(
-            "BABA DOOR . . DOOR .",
-            "^BABA ^IS ^YOU . . .",
+            "THING DOOR . . DOOR .",
+            "^THING ^IS ^YOU . . .",
             "^DOOR ^IS ^TELE . . ."
         )
         val out = Engine.step(s, Dir.RIGHT)
@@ -248,8 +248,8 @@ fun main() {
     // 21. STOP beats PUSH
     run {
         val s = board(
-            "BABA ROCK .",
-            "^BABA ^IS ^YOU",
+            "THING ROCK .",
+            "^THING ^IS ^YOU",
             "^ROCK ^IS ^PUSH ^AND ^STOP"
         )
         val out = Engine.step(s, Dir.RIGHT)
@@ -258,13 +258,13 @@ fun main() {
 
     // 22. win / defeat
     run {
-        check("win on overlap", Engine.step(board("BABA FLAG .", "^BABA ^IS ^YOU", "^FLAG ^IS ^WIN"), Dir.RIGHT).win)
-        check("defeat on overlap", Engine.step(board("BABA LAVA .", "^BABA ^IS ^YOU", "^LAVA ^IS ^DEFEAT"), Dir.RIGHT).defeat)
+        check("win on overlap", Engine.step(board("THING FLAG .", "^THING ^IS ^YOU", "^FLAG ^IS ^WIN"), Dir.RIGHT).win)
+        check("defeat on overlap", Engine.step(board("THING LAVA .", "^THING ^IS ^YOU", "^LAVA ^IS ^DEFEAT"), Dir.RIGHT).defeat)
     }
 
     // 23. exactly one tile per input, no skipping
     run {
-        val s = board("BABA . . . .", "^BABA ^IS ^YOU")
+        val s = board("THING . . . .", "^THING ^IS ^YOU")
         var cur = s
         var n = 0
         while (n < 10) {
@@ -276,21 +276,21 @@ fun main() {
 
     // 24. subject AND
     run {
-        val rs = Rules.evaluate(board("BABA KEKE .", "^BABA ^AND ^KEKE ^IS ^YOU"))
+        val rs = Rules.evaluate(board("THING PIP .", "^THING ^AND ^PIP ^IS ^YOU"))
         check("subject AND applies to both", rs.rules.size == 1 && rs.props[0].contains(Prop.YOU) && rs.props[1].contains(Prop.YOU))
     }
 
     // 25. word tiles are never the noun they spell
     run {
-        check("text tile is not YOU", !Rules.evaluate(board("^BABA .", "^BABA ^IS ^YOU")).hasYou)
+        check("text tile is not YOU", !Rules.evaluate(board("^THING .", "^THING ^IS ^YOU")).hasYou)
     }
 
     // 26. parser rejects malformed sentences
     run {
-        check("BABA IS IS YOU invalid", Rules.parseLine(listOf(Word.BABA, Word.IS, Word.IS, Word.YOU)) == null)
+        check("THING IS IS YOU invalid", Rules.parseLine(listOf(Word.THING, Word.IS, Word.IS, Word.YOU)) == null)
         check("IS YOU invalid", Rules.parseLine(listOf(Word.IS, Word.YOU)) == null)
-        check("BABA YOU invalid", Rules.parseLine(listOf(Word.BABA, Word.YOU)) == null)
-        check("BABA IS YOU valid", Rules.parseLine(listOf(Word.BABA, Word.IS, Word.YOU)) != null)
+        check("THING YOU invalid", Rules.parseLine(listOf(Word.THING, Word.YOU)) == null)
+        check("THING IS YOU valid", Rules.parseLine(listOf(Word.THING, Word.IS, Word.YOU)) != null)
     }
 
     // 27. TEXT controls word tiles
@@ -300,13 +300,13 @@ fun main() {
 
     // 28. a sentence cannot start mid-run (no accidental GRASS IS YOU)
     run {
-        val rs = Rules.evaluate(board("BABA . GRASS", "^BABA ^ON ^GRASS ^IS ^YOU"))
+        val rs = Rules.evaluate(board("THING . GRASS", "^THING ^ON ^GRASS ^IS ^YOU"))
         check("no sub-sentence parsed from the middle", rs.rules.size == 1)
     }
 
     // 29. undo history is exact
     run {
-        val lvl = LevelDef("t", "t", listOf("BABA . .", "^BABA ^IS ^YOU"))
+        val lvl = LevelDef("t", "t", listOf("THING . .", "^THING ^IS ^YOU"))
         val g = GameSession(lvl)
         val start = g.state
         g.step(Dir.RIGHT)
@@ -317,7 +317,7 @@ fun main() {
 
     // 30. level must not be solvable by doing nothing
     run {
-        val s = board("BABA . FLAG", "^BABA ^IS ^YOU", "^FLAG ^IS ^WIN")
+        val s = board("THING . FLAG", "^THING ^IS ^YOU", "^FLAG ^IS ^WIN")
         check("no instant win", !Solver.isWin(s))
     }
 
@@ -335,8 +335,8 @@ fun main() {
     // 32. a push chain never moves a link twice in one turn
     run {
         val s = board(
-            "BABA ROCK ROCK . .",
-            "^BABA ^IS ^YOU . .",
+            "THING ROCK ROCK . .",
+            "^THING ^IS ^YOU . .",
             "^ROCK ^IS ^PUSH . ."
         )
         val after = run(s, Dir.RIGHT)
@@ -347,13 +347,13 @@ fun main() {
     // 33. two separate YOU objects do not shove each other twice
     run {
         val s = board(
-            "BABA . KEKE . .",
-            "^BABA ^IS ^YOU . .",
-            "^KEKE ^IS ^YOU . ."
+            "THING . PIP . .",
+            "^THING ^IS ^YOU . .",
+            "^PIP ^IS ^YOU . ."
         )
         val after = run(s, Dir.RIGHT)
-        val bs = after.items.filter { !it.isText && it.word == Word.BABA }.map { it.x }
-        val ks = after.items.filter { !it.isText && it.word == Word.KEKE }.map { it.x }
+        val bs = after.items.filter { !it.isText && it.word == Word.THING }.map { it.x }
+        val ks = after.items.filter { !it.isText && it.word == Word.PIP }.map { it.x }
         check("baba moved one tile", bs == listOf(1))
         check("keke moved one tile", ks == listOf(3))
     }

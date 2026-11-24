@@ -13,6 +13,14 @@ object Levels_order {
         return Levels.all.first().id
     }
 
+    /** A puzzle is open once the one before it has been solved. */
+    fun isUnlocked(context: Context, id: String): Boolean {
+        val idx = Levels.all.indexOfFirst { it.id == id }
+        if (idx < 0) return false
+        if (idx == 0) return true
+        return Progress.isSolved(context, Levels.all[idx - 1].id)
+    }
+
     fun nextAfter(id: String): String? {
         val idx = Levels.all.indexOfFirst { it.id == id }
         if (idx < 0) return null
