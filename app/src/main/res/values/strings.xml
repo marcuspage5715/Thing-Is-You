@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Thing Is You</string>
+    <string name="word_thing">THING</string>
+    <string name="word_is">IS</string>
+    <string name="word_you">YOU</string>
+    <string name="tagline">Change the rules. Change the world.</string>
+    <string name="play">PLAY</string>
+    <string name="levels">LEVELS</string>
+    <string name="exit">EXIT</string>
+    <string name="back">BACK</string>
+    <string name="undo">UNDO</string>
+    <string name="restart">RESET</string>
+    <string name="next">NEXT</string>
+    <string name="retry">TRY AGAIN</string>
+    <string name="solved">SOLVED</string>
+    <string name="defeated">UNDONE</string>
+    <string name="solved_hint">You changed the rules and it worked.</string>
+    <string name="defeated_hint">Undo your last move, or start the puzzle again.</string>
+    <string name="select_level">CHOOSE A PUZZLE</string>
+</resources>
