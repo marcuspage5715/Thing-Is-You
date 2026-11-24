@@ -138,8 +138,8 @@ kotlinc app/src/main/java/com/thingisyou/engine/*.kt tools/Solver.kt tools/Verif
     -include-runtime -d verify.jar && java -jar verify.jar
 ```
 
-`tools/rstub/R.kt` is a generated stub used only to type-check the Android sources
-outside Gradle. It is not part of the app.
+The Android sources were additionally type-checked outside Gradle against the platform
+`android.jar`, using a throwaway generated `R` class. Nothing from that step ships.
 
 ---
 
