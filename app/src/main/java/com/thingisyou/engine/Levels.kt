@@ -310,7 +310,20 @@ object Levels {
         ),
 
         LevelDef(
-            "21", "Finale",
+            "21", "Corner Office",
+            listOf(
+                "^THING . . . . . .",
+                "^IS . ^FLAG . . ^IS .",
+                "^YOU . . . . . .",
+                ". . . . . . .",
+                "THING . FLAG . . . .",
+                ". . . . . . ^WIN"
+            ),
+            hint = "WIN is in the corner and cannot move at all. The sentence has to be built around it."
+        ),
+
+        LevelDef(
+            "22", "Finale",
             listOf(
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",

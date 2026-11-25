@@ -10,6 +10,18 @@ fun main(args: Array<String>) {
         val start = try { lvl.build() } catch (e: Exception) {
             println("${lvl.id} ${lvl.name}: PARSE ERROR ${e.message}"); bad++; continue
         }
+        // Authored solution first: replay is instant and is a proof, not a guess.
+        val authored = Solutions.of(lvl.id)
+        if (authored != null) {
+            val dirs = authored.mapNotNull {
+                when (it) { 'U' -> Dir.UP; 'D' -> Dir.DOWN; 'L' -> Dir.LEFT; 'R' -> Dir.RIGHT; else -> null }
+            }
+            val ok = Solver.replay(start, dirs)
+            println("${lvl.id} ${lvl.name}: ${if (ok) "OK (authored, ${dirs.size} moves)" else "AUTHORED SOLUTION DOES NOT WIN"}")
+            if (!ok) bad++
+            System.out.flush()
+            continue
+        }
         val t0 = System.currentTimeMillis()
         val res = Solver.solve(start, maxDepth = 45, maxNodes = 4_000_000, budgetMs = budget)
         val ms = System.currentTimeMillis() - t0
