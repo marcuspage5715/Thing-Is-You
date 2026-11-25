@@ -351,7 +351,25 @@ object Levels {
         ),
 
         LevelDef(
-            "24", "Finale",
+            "25", "Three Corners",
+            listOf(
+                "^THING ^IS ^YOU . . . . . . . . . . . . . . .",
+                ". ^FLAG . . . . . . . . . . . . . . . ^IS .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . . . . . .",
+                ". ^WIN . . . . . . . . . . . . . . . . THING",
+                ". . . . . . . . . . . . . . . . . . FLAG"
+            ),
+            hint = "Three words, three corners, one immovable WIN. Order matters: the gap closes as you fill it."
+        ),
+
+        LevelDef(
+            "26", "Finale",
             listOf(
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",
