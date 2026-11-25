@@ -3,136 +3,128 @@ package com.thingisyou.engine
 /**
  * The shipped levels.
  *
- * Every one of these has been machine-checked with [Solver] at build time: the solver finds
- * a solution and [Solver.replay] then plays it back through the real engine, so "solvable"
- * is a witnessed fact rather than a guess.
+ * Design rule for this set: **no level ever starts with a WIN rule in place.** A puzzle is
+ * only a puzzle if the player has to build the winning sentence themselves — bring the
+ * scattered word tiles into one line, choose the right noun, or rewrite what the player is.
+ * `tools/Difficulty.kt` fails the build if any level regresses to handing the answer over.
  *
- * All puzzles are original. They use the same vocabulary and spirit as the genre but none of
- * them are transcriptions of existing levels.
+ * Every level is machine-checked: [Solver] finds a solution and [Solver.replay] plays it
+ * back through the real engine.
  *
- * Two conventions used below:
- *  - A "rule pocket" is the two-row block at the top of a level:
- *        WALL WALL WALL ...
- *        WALL ^WALL ^IS ^STOP WALL ...
- *    It is sealed on all sides, so the player can never reach those tiles. Levels that use
- *    WALL as a barrier need it, otherwise walls would be pure decoration you can walk through.
+ * Conventions:
  *  - `X+Y` puts two things on one tile (e.g. `THING+GRASS`).
+ *  - A "rule pocket" is a sealed two-row block of `WALL IS STOP` at the top of a level.
+ *    Levels that use WALL as a barrier need it; otherwise walls are pure decoration.
  */
 object Levels {
 
     val all: List<LevelDef> = listOf(
 
-        // ---------------------------------------------------------------- chapter 1
+        // ------------------------------------------------------- 1. learn to build
 
         LevelDef(
-            "01", "First Steps",
+            "01", "Assembly Required",
             listOf(
-                "THING . . . . FLAG",
-                ". . . . . .",
-                "^THING ^IS ^YOU . . .",
-                "^FLAG ^IS ^WIN . . ."
+                "^THING ^IS ^YOU . . . .",
+                ". . . . . . .",
+                "^FLAG . . ^IS . ^WIN .",
+                ". . . . . . .",
+                "THING . . . . FLAG ."
             ),
-            hint = "You are THING. Touch the FLAG."
+            hint = "Nothing says FLAG is WIN yet. Push the words into one line."
         ),
 
         LevelDef(
-            "02", "Break The Wall",
+            "02", "The Wrong Flag",
             listOf(
                 "^THING ^IS ^YOU . . . . .",
-                "^FLAG ^IS ^WIN . . . . .",
                 ". . . . . . . .",
-                ". . . . WALL . . .",
-                ". . . . WALL . . .",
-                ". . . . WALL . . .",
-                ". . ^WALL . WALL . . .",
-                ". . ^IS . WALL . . .",
-                "THING . ^STOP . WALL . FLAG ."
+                "^FLAG ^IS . . . . ^WIN .",
+                "^ROCK . . . . . . .",
+                ". . . . . . . .",
+                "THING . ROCK . . . . ."
             ),
-            hint = "A rule is only true while its words stay in one line."
+            hint = "There is no flag on this board. Look for something that is."
         ),
 
         LevelDef(
-            "03", "Push Comes To Shove",
+            "03", "Become The Goal",
             listOf(
-                "WALL WALL WALL WALL WALL",
-                "WALL ^WALL ^IS ^STOP WALL",
-                "^THING ^IS ^YOU . . .",
-                "^ROCK ^IS ^PUSH . . .",
-                "^FLAG ^IS ^WIN . . .",
-                "WALL THING ROCK . WALL",
-                "WALL WALL . WALL WALL",
-                "WALL WALL FLAG WALL WALL"
+                "^THING ^IS ^YOU . .",
+                ". . . . .",
+                "^THING ^IS . ^WIN .",
+                ". . . . .",
+                "THING . . . ."
             ),
-            hint = "The rock is in your way. Move it."
+            hint = "You are not required to go anywhere. Make yourself the thing worth reaching."
         ),
 
         LevelDef(
-            "04", "Build A Rule",
-            listOf(
-                ". . . . . . .",
-                ". . . . . . .",
-                "^FLAG ^IS . ^NOT . .",
-                ". . ^WIN . . . .",
-                ". . . . . . .",
-                ". . . . . . .",
-                "^THING ^IS ^YOU . . .",
-                ". . . . . THING FLAG"
-            ),
-            hint = "FLAG is not WIN yet. Finish the sentence - and mind the NOT."
-        ),
-
-        LevelDef(
-            "05", "Float Your Boat",
+            "04", "Not Quite",
             listOf(
                 "^THING ^IS ^YOU . . . .",
-                "^FLAG ^IS ^WIN . . . .",
                 ". . . . . . .",
-                ". . . ^AND ^FLOAT . .",
+                "^FLAG ^IS ^NOT ^WIN . .",
                 ". . . . . . .",
-                "THING . . WATER WATER FLAG .",
-                "^WATER ^IS ^SINK . . . ."
+                ". . . . . . .",
+                "THING . . . . FLAG ."
             ),
-            hint = "AND bolts a second property onto the same rule."
+            hint = "A NOT is sitting in the sentence. Get it out, then close the gap."
         ),
 
-        // ---------------------------------------------------------------- chapter 2
-
         LevelDef(
-            "06", "Metamorphosis",
+            "05", "Two Halves",
             listOf(
-                "^FLAG ^IS ^WIN . . .",
-                "^ROCK ^IS . ^FLAG . .",
                 "^THING ^IS ^YOU . . .",
                 ". . . . . .",
-                "THING ROCK . . . ."
+                "^FLAG . ^IS . ^WIN",
+                ". . . . . .",
+                "THING . . . FLAG"
             ),
-            hint = "ROCK IS FLAG turns every rock on the board into a flag."
+            hint = "Both halves are in the same row. Push them together."
+        ),
+
+        // ------------------------------------------------------- 2. choosing well
+
+        LevelDef(
+            "06", "Cornered",
+            listOf(
+                ". . ^THING ^IS ^YOU",
+                "^FLAG . . . .",
+                ". . . . .",
+                "^IS . . . .",
+                ". . . . .",
+                "^WIN . . . .",
+                ". . . . .",
+                "THING . . . FLAG"
+            ),
+            hint = "The words are jammed against the edge. Push them up the column."
         ),
 
         LevelDef(
-            "07", "Stay On The Path",
+            "07", "Break The Wall",
             listOf(
-                "^THING ^ON ^GRASS ^IS ^YOU . .",
-                "^FLAG ^IS ^WIN . . . . .",
-                ". . . . . . .",
-                "GRASS GRASS GRASS GRASS GRASS GRASS .",
-                "THING+GRASS . . . . FLAG+GRASS ."
+                ". . . . . .",
+                "^FLAG ^IS ^STOP . ^WIN .",
+                ". . . . . .",
+                "^THING ^IS ^YOU . . .",
+                ". . . . . .",
+                "THING . . . . FLAG"
             ),
-            hint = "Step off the grass and you stop being YOU."
+            hint = "The flag is STOP, so you cannot reach it. Change what FLAG is."
         ),
 
         LevelDef(
-            "08", "Face The Music",
+            "08", "Deep Water",
             listOf(
-                "^THING ^FACING ^STAR ^IS ^WIN .",
                 "^THING ^IS ^YOU . . . .",
-                ". . . . . .",
-                ". . . . . .",
-                ". . . STAR . .",
-                ". . . . . .",
-                "THING . . . . ."
+                "^WATER ^IS ^SINK . . . .",
+                ". . . . . . .",
+                "^FLAG . . ^IS . ^WIN .",
+                ". . . . . . .",
+                "THING . WATER WATER FLAG ."
             ),
-            hint = "FACING looks at the tile you last moved towards."
+            hint = "You cannot cross water. Make yourself able to."
         ),
 
         LevelDef(
@@ -141,11 +133,15 @@ object Levels {
                 "^THING ^IS ^YOU . . .",
                 "^WATER ^IS ^SINK . . .",
                 "^ROCK ^IS ^PUSH ^AND ^SINK .",
-                "^FLAG ^IS ^WIN .",
-                "THING ROCK WATER FLAG ."
+                ". . . . .",
+                "^FLAG . . ^IS ^WIN",
+                ". . . . .",
+                "THING ROCK WATER . FLAG"
             ),
-            hint = "Two SINK things on one tile destroy each other."
+            hint = "The rock can clear one tile of water. Then build the sentence."
         ),
+
+        // ------------------------------------------------------- 3. properties
 
         LevelDef(
             "10", "Fire And Ice",
@@ -153,16 +149,15 @@ object Levels {
                 "WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL",
                 "^THING ^IS ^YOU . . .",
-                "^FLAG ^IS ^WIN . . .",
                 "^ICE ^IS ^DEFEAT ^AND ^MELT .",
                 "^LAVA ^IS ^PUSH ^AND ^HOT .",
+                "^FLAG . . ^IS ^WIN .",
+                ". . . . . .",
                 "WALL THING LAVA ICE . FLAG",
                 "WALL WALL WALL WALL WALL WALL"
             ),
-            hint = "MELT things vanish when they touch something HOT."
+            hint = "Melt the ice, then finish the sentence in the row above."
         ),
-
-        // ---------------------------------------------------------------- chapter 3
 
         LevelDef(
             "11", "Left Behind",
@@ -171,11 +166,11 @@ object Levels {
                 "^WATER ^IS ^SINK . . . .",
                 "^ROCK ^IS ^PUSH ^AND ^SINK .",
                 "^ROCK ^HAS ^FLAG . . . .",
-                "^FLAG ^IS ^WIN . . . .",
+                "^FLAG . . ^IS ^WIN .",
                 ". . . . . .",
                 "THING ROCK . WATER . ."
             ),
-            hint = "HAS leaves something behind when a thing is destroyed."
+            hint = "HAS leaves something behind. Sink the rock and look."
         ),
 
         LevelDef(
@@ -183,25 +178,28 @@ object Levels {
             listOf(
                 "^WALL ^IS ^YOU . . .",
                 "^THING ^IS ^STOP . . .",
-                "^FLAG ^IS ^WIN . . .",
+                ". . . . . .",
+                "^FLAG . . ^IS ^WIN",
                 ". . . . . .",
                 "THING . WALL . . .",
                 ". . . . . .",
                 ". . . . FLAG ."
             ),
-            hint = "YOU does not have to mean THING."
+            hint = "You are not the thing you think you are."
         ),
 
         LevelDef(
             "13", "Wordplay",
             listOf(
                 "^TEXT ^IS ^YOU . . .",
-                "^FLAG ^IS ^WIN . . .",
+                ". . . . . .",
+                "^FLAG . ^IS ^WIN .",
+                ". . . . . .",
                 ". . . FLAG . .",
                 ". . . . . .",
                 "^ROCK ^IS ^PUSH . . ."
             ),
-            hint = "TEXT means every word tile on the board."
+            hint = "You drive the words themselves. Push a word onto the flag."
         ),
 
         LevelDef(
@@ -211,14 +209,14 @@ object Levels {
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",
                 "^THING ^IS ^YOU . . . .",
                 "^DOOR ^IS ^TELE . . . .",
-                "^FLAG ^IS ^WIN . . . .",
+                "^FLAG . . ^IS ^WIN .",
                 ". . . . . . .",
                 "THING DOOR . . . . .",
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL WALL WALL FLAG+DOOR WALL WALL WALL",
                 "WALL WALL WALL WALL WALL WALL WALL"
             ),
-            hint = "Step on a door and you come out of the other one."
+            hint = "The flag is sealed in. The door is the only way in."
         ),
 
         LevelDef(
@@ -226,7 +224,7 @@ object Levels {
             listOf(
                 "^THING ^IS ^YOU . . . .",
                 "^LAVA ^IS ^DEFEAT . . . .",
-                "^FLAG ^IS ^WIN . . . .",
+                "^FLAG . . ^IS ^WIN .",
                 ". . . . . . .",
                 "THING . . . . . .",
                 ". . . . . . .",
@@ -234,29 +232,30 @@ object Levels {
                 ". . . . . . .",
                 ". . . FLAG . ."
             ),
-            hint = "DEFEAT ends the level. Find the safe crossing."
+            hint = "Build the sentence, then cross without touching the lava."
         ),
 
         LevelDef(
             "16", "Frozen",
             listOf(
-                ". . . . . . .",
-                ". ^ROCK ^IS ^ROCK . . .",
-                ". . . . . . .",
-                ". ^ROCK ^IS ^FLAG . . .",
-                ". . . . . . .",
-                ". ^FLAG ^IS ^WIN . . .",
-                ". ^THING ^IS ^YOU . . .",
-                ". . . . . . .",
-                "THING . . . ROCK . ."
+                ". . . . . .",
+                "^ROCK ^IS ^ROCK . . .",
+                ". . . . . .",
+                "^ROCK ^IS ^FLAG . . .",
+                ". . . . . .",
+                "^FLAG . ^IS ^WIN .",
+                ". . . . . .",
+                "^THING ^IS ^YOU . . .",
+                ". . . . . .",
+                "THING . . ROCK . ."
             ),
-            hint = "A IS A stops every other change to A."
+            hint = "ROCK IS ROCK freezes rocks. Break it, then finish the other sentence."
         ),
 
         LevelDef(
             "17", "Moving Parts",
             listOf(
-                "^FLAG ^IS . ^WIN . ROCK< .",
+                "^FLAG . ^IS . ^WIN . ROCK<",
                 ". . . . . . .",
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL THING FLAG . . . WALL",
@@ -268,27 +267,23 @@ object Levels {
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",
                 "WALL WALL WALL WALL WALL WALL WALL"
             ),
-            hint = "That rock will not wait for you."
+            hint = "You are sealed in. Let the moving rock do the work."
         ),
-
-        // ---------------------------------------------------------------- chapter 4
 
         LevelDef(
             "18", "Fireproof",
             listOf(
-                "WALL WALL WALL WALL WALL WALL WALL",
-                "WALL ^WALL ^IS ^STOP WALL WALL WALL",
-                "^THING ^IS ^YOU . . . .",
-                ". . . . . . .",
-                ". . . ^AND ^NOT ^MELT .",
-                "^THING ^IS ^MELT . . . .",
-                "^LAVA ^IS ^HOT . . . .",
-                "^FLAG ^IS ^WIN . . . .",
-                ". . . . . . .",
-                ". WALL WALL WALL WALL WALL WALL",
-                "THING . LAVA LAVA LAVA FLAG ."
+                "WALL WALL WALL WALL WALL WALL",
+                "WALL ^WALL ^IS ^STOP WALL WALL",
+                "^THING ^IS ^YOU . . .",
+                ". . . ^AND ^NOT ^MELT",
+                "^THING ^IS ^MELT . . .",
+                "^LAVA ^IS ^HOT . . .",
+                "^FLAG . ^IS ^WIN .",
+                ". . . . . .",
+                "THING . LAVA LAVA FLAG"
             ),
-            hint = "You are made of MELT and the lava is HOT. NOT fixes that."
+            hint = "You are made of MELT and the lava is HOT. Cancel that, then build."
         ),
 
         LevelDef(
@@ -298,212 +293,53 @@ object Levels {
                 "^WATER ^IS ^SINK . . .",
                 "^ROCK ^IS ^PUSH ^AND ^SINK .",
                 "^ROCK ^MAKE ^STAR . .",
-                "^STAR ^IS ^WIN . . .",
+                "^FLAG . . ^IS ^WIN",
                 ". . . . .",
-                "THING ROCK WATER . ."
+                "THING ROCK WATER . FLAG"
             ),
             hint = "MAKE turns a destroyed thing into something else."
         ),
 
         LevelDef(
-            "20", "Follow The Leader",
-            listOf(
-                "^FLAG ^IS . ^WIN . BOX< .",
-                ". . . . . . .",
-                ". . . . . . .",
-                "^THING ^IS ^YOU . . . .",
-                ". . . . . . .",
-                ". . . . . . .",
-                "THING . . . . FLAG ."
-            ),
-            hint = "SHIFT things move by themselves. Let the box help."
-        ),
-
-        LevelDef(
-            "21", "Two Ways",
-            listOf(
-                "^THING ^AND ^PIP ^IS ^YOU . .",
-                "^PIP ^IS ^STOP . . . .",
-                "^FLAG ^IS ^WIN . . . .",
-                ". . . . . . .",
-                ". . . . . . .",
-                "THING . . . . . .",
-                "PIP . . . . . .",
-                ". . . . FLAG ."
-            ),
-            hint = "You drive both of them at once. PIP will not let you through."
-        ),
-
-        LevelDef(
-            "22", "The Long Push",
-            listOf(
-                "WALL WALL WALL WALL WALL WALL WALL",
-                "WALL ^WALL ^IS ^STOP WALL WALL WALL",
-                "^THING ^IS ^YOU . . . .",
-                "^ROCK ^IS ^PUSH . . . .",
-                "^FLAG ^IS ^WIN . . . .",
-                "WALL WALL WALL WALL WALL WALL WALL",
-                "WALL THING ROCK . FLAG . WALL",
-                "WALL WALL WALL WALL WALL WALL WALL"
-            ),
-            hint = "Push the rock out of the corridor."
-        ),
-
-        LevelDef(
-            "23", "Mirror Image",
-            listOf(
-                "^THING ^IS ^YOU . . . .",
-                "^FLAG ^IS ^WIN . . . .",
-                "^ROCK ^IS ^PUSH ^AND ^STOP . .",
-                ". . . . . . .",
-                ". . . . . . .",
-                "THING . ROCK . . . .",
-                ". . . . . . .",
-                ". . . . . . FLAG"
-            ),
-            hint = "That rock blocks you and will not budge. Change the rule."
-        ),
-
-        LevelDef(
-            "24", "Half A Rule",
-            listOf(
-                ". . . . . . .",
-                "^THING ^IS ^YOU . . . .",
-                ". . . . . . .",
-                "^FLAG ^IS . . . . .",
-                ". . . ^WIN . . .",
-                ". . . . . . .",
-                "THING . . . . . .",
-                ". . . . . . FLAG"
-            ),
-            hint = "Two halves of a sentence do nothing until they meet."
-        ),
-
-        LevelDef(
-            "25", "Sinking Feeling",
-            listOf(
-                "^THING ^IS ^YOU . . . .",
-                "^WATER ^IS ^SINK . . . .",
-                "^ROCK ^IS ^PUSH ^AND ^SINK . .",
-                "^FLAG ^IS ^WIN . . . .",
-                ". . . . . . .",
-                "THING ROCK WATER WATER FLAG ."
-            ),
-            hint = "You only have one rock. Choose where it goes."
-        ),
-
-        LevelDef(
-            "26", "Hot Pursuit",
+            "20", "Wrong Way Round",
             listOf(
                 "^THING ^IS ^YOU . . .",
-                "^FLAG ^IS ^WIN . . .",
-                "^LAVA ^IS ^DEFEAT ^AND ^PUSH .",
+                "^FLAG ^IS ^LAVA . .",
                 ". . . . . .",
+                "^ROCK . ^IS ^WIN .",
                 ". . . . . .",
-                "THING LAVA . . FLAG ."
+                "THING . . ROCK ."
             ),
-            hint = "Push the lava out of your way. Do not walk into it."
+            hint = "FLAG IS LAVA, and there is no flag anyway. Give the goal to something else."
         ),
 
         LevelDef(
-            "27", "Copycat",
+            "21", "Copy",
             listOf(
                 "^THING ^IS ^YOU . . .",
-                "^FLAG ^IS ^WIN . . .",
-                "^ROCK ^IS ^PUSH . . .",
-                "^PIP ^IS ^ROCK . . .",
+                "^ROCK ^IS ^FLAG . .",
                 ". . . . . .",
-                "THING PIP . ROCK . .",
+                "^FLAG . ^IS ^WIN .",
                 ". . . . . .",
-                ". . . . FLAG ."
+                "THING . . ROCK ."
             ),
-            hint = "One IS rule can rewrite every other object."
+            hint = "ROCK IS FLAG already works. It still needs something to be worth reaching."
         ),
 
         LevelDef(
-            "28", "Elevator",
-            listOf(
-                "^THING ^IS ^YOU . . .",
-                "^THING ^ON ^METAL ^IS ^WIN .",
-                "^ROCK ^IS ^PUSH . . .",
-                ". . . . . .",
-                ". . . . . .",
-                "THING . ROCK METAL . ."
-            ),
-            hint = "You only win while you are standing on metal."
-        ),
-
-        LevelDef(
-            "29", "Crossing",
-            listOf(
-                "^THING ^IS ^YOU . . .",
-                "^WATER ^IS ^SINK . . .",
-                "^ROCK ^IS ^PUSH ^AND ^SINK .",
-                "^DOOR ^IS ^TELE . . .",
-                "^FLAG ^IS ^WIN . . .",
-                ". . . . . .",
-                "THING ROCK WATER . DOOR FLAG"
-            ),
-            hint = "Sink the rock, then find the door."
-        ),
-
-        LevelDef(
-            "30", "Wall Pusher",
-            listOf(
-                "^THING ^IS ^YOU . . .",
-                "^WALL ^IS ^PUSH . . .",
-                "^FLAG ^IS ^WIN . . .",
-                ". . . . . .",
-                ". . . . . .",
-                "THING . WALL . FLAG"
-            ),
-            hint = "Nothing says a wall has to be a wall."
-        ),
-
-        LevelDef(
-            "31", "The Shelf",
-            listOf(
-                "WALL WALL WALL WALL WALL WALL",
-                "WALL ^WALL ^IS ^STOP WALL WALL",
-                "^THING ^IS ^YOU . . .",
-                "^FLAG ^IS ^WIN . . .",
-                "WALL THING ROCK . . WALL",
-                "WALL WALL . WALL WALL WALL",
-                "WALL WALL FLAG WALL WALL WALL",
-                "WALL WALL WALL WALL WALL WALL"
-            ),
-            hint = "The rock is sitting on the only way down."
-        ),
-
-        LevelDef(
-            "32", "Double Trouble",
-            listOf(
-                "WALL WALL WALL WALL WALL WALL WALL",
-                "WALL ^WALL ^IS ^STOP WALL WALL WALL",
-                "^THING ^IS ^YOU . . . .",
-                "^FLAG ^IS ^WIN . . . .",
-                "WALL THING ROCK ROCK . . WALL",
-                "WALL WALL WALL . WALL WALL WALL",
-                "WALL WALL WALL FLAG WALL WALL WALL",
-                "WALL WALL WALL WALL WALL WALL WALL"
-            ),
-            hint = "Two rocks, one gap. Push them both past it."
-        ),
-
-        LevelDef(
-            "33", "Finale",
+            "22", "Finale",
             listOf(
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",
                 "^THING ^IS ^YOU . . . .",
                 "^WALL ^IS ^STOP . . . .",
                 "^ROCK ^IS ^FLAG . . . .",
-                "^FLAG ^IS ^WIN . . . .",
+                "^FLAG . . ^IS ^WIN .",
                 ". . . . . . .",
                 ". . . . . . .",
                 "THING . . WALL ROCK . ."
             ),
-            hint = "Everything you have learned, in one room."
+            hint = "Everything at once: break a rule, rewrite an object, finish the sentence."
         )
     )
 
