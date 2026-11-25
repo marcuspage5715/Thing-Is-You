@@ -16,6 +16,34 @@ object Solver {
     )
 
     private val DIRS = arrayOf(Dir.UP, Dir.DOWN, Dir.LEFT, Dir.RIGHT)
+
+    /**
+     * Crude guide: how far the WIN word is from the IS word, plus how far IS is from the
+     * nearest noun word. Small means "closer to a finished sentence".
+     */
+    private fun heuristic(s: State): Int {
+        var win: Item? = null
+        var isT: Item? = null
+        val nouns = ArrayList<Item>()
+        for (it in s.items) {
+            if (!it.isText) continue
+            when (it.word) {
+                Word.WIN -> if (win == null) win = it
+                Word.IS -> if (isT == null) isT = it
+                else -> if (it.word.kind == WordKind.NOUN) nouns.add(it)
+            }
+        }
+        val w = win ?: return 0
+        val i = isT ?: return 0
+        var h = Math.abs(w.x - i.x) + Math.abs(w.y - i.y)
+        var best = Int.MAX_VALUE
+        for (n in nouns) {
+            val d = Math.abs(n.x - i.x) + Math.abs(n.y - i.y)
+            if (d < best) best = d
+        }
+        if (best != Int.MAX_VALUE) h += best
+        return h
+    }
     @Volatile private var deadline: Long = Long.MAX_VALUE
 
     fun isWin(state: State): Boolean {

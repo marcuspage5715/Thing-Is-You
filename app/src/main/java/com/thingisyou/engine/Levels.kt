@@ -50,11 +50,11 @@ object Levels {
         LevelDef(
             "03", "Become The Goal",
             listOf(
-                "^THING ^IS ^YOU . .",
+                ". ^THING ^IS ^YOU .",
                 ". . . . .",
-                "^THING ^IS . ^WIN .",
+                ". ^THING . ^IS .",
                 ". . . . .",
-                "THING . . . ."
+                "THING . . . ^WIN"
             ),
             hint = "You are not required to go anywhere. Make yourself the thing worth reaching."
         ),
@@ -77,9 +77,9 @@ object Levels {
             listOf(
                 "^THING ^IS ^YOU . . .",
                 ". . . . . .",
-                "^FLAG . ^IS . ^WIN",
+                ". ^FLAG . ^IS . .",
                 ". . . . . .",
-                "THING . . . FLAG"
+                "THING . . . FLAG ^WIN"
             ),
             hint = "Both halves are in the same row. Push them together."
         ),
@@ -193,10 +193,10 @@ object Levels {
             listOf(
                 "^TEXT ^IS ^YOU . . .",
                 ". . . . . .",
-                "^FLAG . ^IS ^WIN .",
+                "^FLAG . ^IS . .",
                 ". . . . . .",
                 ". . . FLAG . .",
-                ". . . . . .",
+                ". . . . . ^WIN",
                 "^ROCK ^IS ^PUSH . . ."
             ),
             hint = "You drive the words themselves. Push a word onto the flag."
@@ -236,24 +236,7 @@ object Levels {
         ),
 
         LevelDef(
-            "16", "Frozen",
-            listOf(
-                ". . . . . .",
-                "^ROCK ^IS ^ROCK . . .",
-                ". . . . . .",
-                "^ROCK ^IS ^FLAG . . .",
-                ". . . . . .",
-                "^FLAG . ^IS ^WIN .",
-                ". . . . . .",
-                "^THING ^IS ^YOU . . .",
-                ". . . . . .",
-                "THING . . ROCK . ."
-            ),
-            hint = "ROCK IS ROCK freezes rocks. Break it, then finish the other sentence."
-        ),
-
-        LevelDef(
-            "17", "Moving Parts",
+            "16", "Moving Parts",
             listOf(
                 "^FLAG . ^IS . ^WIN . ROCK<",
                 ". . . . . . .",
@@ -271,7 +254,7 @@ object Levels {
         ),
 
         LevelDef(
-            "18", "Fireproof",
+            "17", "Fireproof",
             listOf(
                 "WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL",
@@ -287,7 +270,7 @@ object Levels {
         ),
 
         LevelDef(
-            "19", "Making Things",
+            "18", "Making Things",
             listOf(
                 "^THING ^IS ^YOU . . .",
                 "^WATER ^IS ^SINK . . .",
@@ -301,33 +284,33 @@ object Levels {
         ),
 
         LevelDef(
-            "20", "Wrong Way Round",
+            "19", "Wrong Way Round",
             listOf(
                 "^THING ^IS ^YOU . . .",
                 "^FLAG ^IS ^LAVA . .",
                 ". . . . . .",
-                "^ROCK . ^IS ^WIN .",
+                ". ^ROCK . ^IS . .",
                 ". . . . . .",
-                "THING . . ROCK ."
+                "THING . . ROCK . ^WIN"
             ),
             hint = "FLAG IS LAVA, and there is no flag anyway. Give the goal to something else."
         ),
 
         LevelDef(
-            "21", "Copy",
+            "20", "Copy",
             listOf(
                 "^THING ^IS ^YOU . . .",
                 "^ROCK ^IS ^FLAG . .",
                 ". . . . . .",
                 "^FLAG . ^IS ^WIN .",
                 ". . . . . .",
-                "THING . . ROCK ."
+                "THING . . ROCK . ^WIN"
             ),
             hint = "ROCK IS FLAG already works. It still needs something to be worth reaching."
         ),
 
         LevelDef(
-            "22", "Finale",
+            "21", "Finale",
             listOf(
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",

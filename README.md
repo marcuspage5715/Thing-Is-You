@@ -102,7 +102,7 @@ Word tiles themselves are always pushable, and are never the noun they spell.
 
 ## Levels
 
-Twenty-two puzzles, in order. Each unlocks when the one before it is solved.
+Twenty-one puzzles, in order. Each unlocks when the one before it is solved.
 
 **No level ever starts with a WIN rule in place.** That is the design rule this set is built
 on: if `FLAG IS WIN` is already sitting on the board, the level is a walk, not a puzzle. In
@@ -175,7 +175,7 @@ app/src/main/java/com/thingisyou/
     Model.kt       board state, level text parser, game session, undo history
     Rules.kt       sentence parser and per-object property resolution
     Engine.kt      one turn: movement, pushes, transforms, sink, melt, teleport, win
-    Levels.kt      the twenty-two puzzles
+    Levels.kt      the twenty-one puzzles
   MainActivity.kt         title screen, PLAY / LEVELS / EXIT
   LevelSelectActivity.kt  grid of puzzles, locked until reached
   GameActivity.kt         one puzzle, arrow pad, and the end-of-level overlay
@@ -192,4 +192,4 @@ tools/                    tests, solver, verifier, wall lint, difficulty audit (
 
 Inspired by the rule-manipulation puzzle genre popularised by *Baba Is You* (Hempuli Oy).
 This is an independent implementation: no assets, code, or levels from that game are used,
-and all twenty-two puzzles were designed and machine-verified for this project.
+and all twenty-one puzzles were designed and machine-verified for this project.
