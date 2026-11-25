@@ -323,7 +323,35 @@ object Levels {
         ),
 
         LevelDef(
-            "22", "Finale",
+            "22", "The Long Carry",
+            listOf(
+                "^THING ^IS ^YOU . . . . . . . .",
+                ". ^FLAG . . . . . . . . .",
+                ". ^IS . . . . . . . . .",
+                ". . . . . . . . . . .",
+                ". . . . . . . . . . .",
+                ". FLAG . . . . . . . . .",
+                ". THING . . . . . . . . ^WIN"
+            ),
+            hint = "WIN cannot move. Both words have to travel the width of the board, one at a time."
+        ),
+
+        LevelDef(
+            "23", "The Long Haul",
+            listOf(
+                "^THING ^IS ^YOU . . . . . . . . . . . .",
+                ". ^FLAG . . . . . . . . . . . . .",
+                ". ^IS . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . .",
+                ". . . . . . . . . . . . . . .",
+                ". FLAG THING . . . . . . . . . . . ^WIN"
+            ),
+            hint = "Wider board, same problem. Two long carries and a walk back at the end."
+        ),
+
+        LevelDef(
+            "24", "Finale",
             listOf(
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",

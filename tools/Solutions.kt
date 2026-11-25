@@ -14,7 +14,10 @@ object Solutions {
 
     val byId: Map<String, String> = mapOf(
         // Corner Office: bring FLAG and IS down to the immovable WIN in the corner.
-        "21" to "URUURRURDDDDUUUURDDDDLLL"
+        "21" to "URUURRURDDDDUUUURDDDDLLL",
+        // The Long Carry: fetch FLAG across, drop it, walk back, fetch IS, drop it, return.
+        "23" to "LL" + "UUUUU" + "RRRRRRRRRRR" + "UR" + "DDDDD" + "LLLLLLLLLLLL" + "UUU" + "RRRRRRRRRRRR" + "UR" + "DDDD" + "LLLLLLLLLLLL" + "D",
+        "22" to "LUUUUU" + "RRRRRRR" + "UR" + "DDDDD" + "LLLLLLLLUUU" + "RRRRRRRR" + "UR" + "DDDD" + "LLLLLLLL"
     )
 
     fun of(id: String): String? = byId[id]
