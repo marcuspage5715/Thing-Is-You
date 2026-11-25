@@ -369,7 +369,21 @@ object Levels {
         ),
 
         LevelDef(
-            "26", "Finale",
+            "26", "Hungry",
+            listOf(
+                "^SNAKE ^IS ^YOU . . . .",
+                "^SNAKE ^EAT ^ROCK . . .",
+                "^FLAG . ^IS . ^WIN .",
+                ". . . . . . .",
+                "SNAKE . ROCK . . . .",
+                ". . . . . . .",
+                ". . . FLAG . . ."
+            ),
+            hint = "EAT is new: the snake swallows what it overlaps. Clear the way, then build."
+        ),
+
+        LevelDef(
+            "27", "Finale",
             listOf(
                 "WALL WALL WALL WALL WALL WALL WALL",
                 "WALL ^WALL ^IS ^STOP WALL WALL WALL",

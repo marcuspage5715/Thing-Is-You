@@ -402,11 +402,116 @@ class GameView @JvmOverloads constructor(
                 canvas.drawCircle(cx + s * 0.16f, cy - s * 0.10f, s * 0.33f, fill)
             }
 
+            // --- the wider cast: distinct colour + simple silhouette each ---
+            Word.GEM, Word.CRYSTAL -> diamond(canvas, cx, cy, s, 0xFF6FE3C4.toInt())
+            Word.COIN -> { fill.color = 0xFFFFC94A.toInt(); canvas.drawCircle(cx, cy, s * 0.34f, fill)
+                fill.color = 0xFFB98A1E.toInt(); canvas.drawCircle(cx, cy, s * 0.20f, fill) }
+            Word.SKULL -> { fill.color = 0xFFE6E9F0.toInt(); canvas.drawCircle(cx, cy, s * 0.34f, fill)
+                fill.color = 0xFF171A22.toInt()
+                canvas.drawCircle(cx - s * 0.12f, cy - s * 0.04f, s * 0.08f, fill)
+                canvas.drawCircle(cx + s * 0.12f, cy - s * 0.04f, s * 0.08f, fill) }
+            Word.BOMB -> { fill.color = 0xFF2B2F3A.toInt(); canvas.drawCircle(cx, cy + s * 0.06f, s * 0.34f, fill)
+                stroke.color = 0xFFFFA33C.toInt(); stroke.strokeWidth = s * 0.06f
+                canvas.drawLine(cx + s * 0.10f, cy - s * 0.24f, cx + s * 0.22f, cy - s * 0.40f, stroke) }
+            Word.CLOUD -> { fill.color = 0xFFDCE3F0.toInt()
+                canvas.drawCircle(cx - s * 0.16f, cy, s * 0.20f, fill)
+                canvas.drawCircle(cx + s * 0.16f, cy, s * 0.20f, fill)
+                canvas.drawCircle(cx, cy - s * 0.08f, s * 0.24f, fill) }
+            Word.SUN -> { fill.color = 0xFFFFD447.toInt(); canvas.drawCircle(cx, cy, s * 0.26f, fill)
+                stroke.color = 0xFFFFD447.toInt(); stroke.strokeWidth = s * 0.05f
+                for (k in 0 until 8) { val a = k * Math.PI / 4
+                    canvas.drawLine(cx + (cos(a) * s * 0.32f).toFloat(), cy + (sin(a) * s * 0.32f).toFloat(),
+                        cx + (cos(a) * s * 0.44f).toFloat(), cy + (sin(a) * s * 0.44f).toFloat(), stroke) } }
+            Word.BIRD -> { fill.color = 0xFF7FB2E5.toInt()
+                path.reset(); path.moveTo(cx - s * 0.40f, cy + s * 0.10f)
+                path.quadTo(cx, cy - s * 0.40f, cx + s * 0.40f, cy + s * 0.10f)
+                path.quadTo(cx, cy + s * 0.24f, cx - s * 0.40f, cy + s * 0.10f); path.close()
+                canvas.drawPath(path, fill) }
+            Word.FISH -> { fill.color = 0xFF4FA3D8.toInt()
+                rect.set(cx - s * 0.34f, cy - s * 0.22f, cx + s * 0.20f, cy + s * 0.22f)
+                canvas.drawOval(rect, fill)
+                path.reset(); path.moveTo(cx + s * 0.16f, cy)
+                path.lineTo(cx + s * 0.44f, cy - s * 0.22f); path.lineTo(cx + s * 0.44f, cy + s * 0.22f)
+                path.close(); canvas.drawPath(path, fill) }
+            Word.SNAKE -> { stroke.color = 0xFF63B36B.toInt(); stroke.strokeWidth = s * 0.16f
+                path.reset(); path.moveTo(cx - s * 0.34f, cy + s * 0.22f)
+                path.cubicTo(cx - s * 0.10f, cy - s * 0.30f, cx + s * 0.10f, cy + s * 0.30f, cx + s * 0.34f, cy - s * 0.20f)
+                canvas.drawPath(path, stroke) }
+            Word.JELLY -> { fill.color = 0xFFE87FB0.toInt()
+                rect.set(cx - s * 0.34f, cy - s * 0.34f, cx + s * 0.34f, cy + s * 0.30f)
+                canvas.drawArc(rect, 180f, 180f, true, fill)
+                rect.set(cx - s * 0.34f, cy - s * 0.06f, cx + s * 0.34f, cy + s * 0.34f)
+                canvas.drawRect(rect, fill) }
+            Word.ROBOT -> { fill.color = 0xFF9AA3B2.toInt()
+                rect.set(cx - s * 0.28f, cy - s * 0.20f, cx + s * 0.28f, cy + s * 0.34f)
+                canvas.drawRoundRect(rect, s * 0.06f, s * 0.06f, fill)
+                fill.color = 0xFF5DE0E6.toInt(); canvas.drawCircle(cx, cy, s * 0.09f, fill)
+                stroke.color = 0xFF9AA3B2.toInt(); stroke.strokeWidth = s * 0.05f
+                canvas.drawLine(cx, cy - s * 0.20f, cx, cy - s * 0.38f, stroke) }
+            Word.CUP -> { fill.color = 0xFFC98A5A.toInt()
+                path.reset(); path.moveTo(cx - s * 0.26f, cy - s * 0.20f)
+                path.lineTo(cx + s * 0.26f, cy - s * 0.20f); path.lineTo(cx + s * 0.16f, cy + s * 0.30f)
+                path.lineTo(cx - s * 0.16f, cy + s * 0.30f); path.close(); canvas.drawPath(path, fill) }
+            Word.BOOK -> { fill.color = 0xFFB0563E.toInt()
+                rect.set(cx - s * 0.30f, cy - s * 0.34f, cx + s * 0.30f, cy + s * 0.34f)
+                canvas.drawRoundRect(rect, s * 0.04f, s * 0.04f, fill)
+                fill.color = 0xFFF0E6D2.toInt()
+                rect.set(cx - s * 0.22f, cy - s * 0.26f, cx + s * 0.26f, cy + s * 0.26f)
+                canvas.drawRect(rect, fill) }
+            Word.LADDER -> { stroke.color = 0xFFC9A227.toInt(); stroke.strokeWidth = s * 0.06f
+                canvas.drawLine(cx - s * 0.18f, cy - s * 0.36f, cx - s * 0.18f, cy + s * 0.36f, stroke)
+                canvas.drawLine(cx + s * 0.18f, cy - s * 0.36f, cx + s * 0.18f, cy + s * 0.36f, stroke)
+                for (k in -1..1) canvas.drawLine(cx - s * 0.18f, cy + k * s * 0.22f, cx + s * 0.18f, cy + k * s * 0.22f, stroke) }
+            Word.GATE -> { stroke.color = 0xFF8B919D.toInt(); stroke.strokeWidth = s * 0.07f
+                for (k in -1..1) canvas.drawLine(cx + k * s * 0.20f, cy - s * 0.34f, cx + k * s * 0.20f, cy + s * 0.34f, stroke)
+                canvas.drawLine(cx - s * 0.30f, cy - s * 0.34f, cx + s * 0.30f, cy - s * 0.34f, stroke) }
+            Word.PORTAL -> { stroke.color = 0xFF9B6BFF.toInt(); stroke.strokeWidth = s * 0.09f
+                canvas.drawCircle(cx, cy, s * 0.30f, stroke)
+                fill.color = 0xFF3A2A6B.toInt(); canvas.drawCircle(cx, cy, s * 0.22f, fill) }
+            Word.BONE -> { fill.color = 0xFFEDE9DC.toInt()
+                rect.set(cx - s * 0.22f, cy - s * 0.07f, cx + s * 0.22f, cy + s * 0.07f); canvas.drawRect(rect, fill)
+                canvas.drawCircle(cx - s * 0.24f, cy - s * 0.10f, s * 0.10f, fill)
+                canvas.drawCircle(cx - s * 0.24f, cy + s * 0.10f, s * 0.10f, fill)
+                canvas.drawCircle(cx + s * 0.24f, cy - s * 0.10f, s * 0.10f, fill)
+                canvas.drawCircle(cx + s * 0.24f, cy + s * 0.10f, s * 0.10f, fill) }
+            Word.CROWN -> { fill.color = 0xFFFFD447.toInt()
+                path.reset(); path.moveTo(cx - s * 0.34f, cy + s * 0.24f)
+                path.lineTo(cx - s * 0.34f, cy - s * 0.24f); path.lineTo(cx - s * 0.12f, cy - s * 0.02f)
+                path.lineTo(cx, cy - s * 0.32f); path.lineTo(cx + s * 0.12f, cy - s * 0.02f)
+                path.lineTo(cx + s * 0.34f, cy - s * 0.24f); path.lineTo(cx + s * 0.34f, cy + s * 0.24f)
+                path.close(); canvas.drawPath(path, fill) }
+            Word.POTION -> { fill.color = 0xFF8A6FD1.toInt()
+                canvas.drawCircle(cx, cy + s * 0.12f, s * 0.26f, fill)
+                rect.set(cx - s * 0.08f, cy - s * 0.38f, cx + s * 0.08f, cy - s * 0.06f); canvas.drawRect(rect, fill) }
+            Word.MUD -> { fill.color = 0xFF6B5230.toInt()
+                rect.set(cx - s * 0.42f, cy - s * 0.20f, cx + s * 0.42f, cy + s * 0.40f)
+                canvas.drawRoundRect(rect, s * 0.16f, s * 0.16f, fill) }
+            Word.SAND -> { fill.color = 0xFFE0C67A.toInt()
+                rect.set(cx - s * 0.42f, cy - s * 0.06f, cx + s * 0.42f, cy + s * 0.40f)
+                canvas.drawRoundRect(rect, s * 0.14f, s * 0.14f, fill) }
+            Word.EYE -> { fill.color = 0xFFF4F6FA.toInt()
+                rect.set(cx - s * 0.38f, cy - s * 0.22f, cx + s * 0.38f, cy + s * 0.22f)
+                canvas.drawOval(rect, fill)
+                fill.color = 0xFF2A5FC4.toInt(); canvas.drawCircle(cx, cy, s * 0.13f, fill) }
+            Word.HAND -> { fill.color = 0xFFE8B98A.toInt()
+                rect.set(cx - s * 0.26f, cy - s * 0.10f, cx + s * 0.26f, cy + s * 0.36f)
+                canvas.drawRoundRect(rect, s * 0.12f, s * 0.12f, fill)
+                for (k in -1..1) { rect.set(cx + k * s * 0.16f - s * 0.06f, cy - s * 0.36f, cx + k * s * 0.16f + s * 0.06f, cy)
+                    canvas.drawRoundRect(rect, s * 0.05f, s * 0.05f, fill) } }
+
             else -> {
                 fill.color = 0xFF8B919D.toInt()
                 canvas.drawCircle(cx, cy, s * 0.36f, fill)
             }
         }
+    }
+
+    private fun diamond(canvas: Canvas, cx: Float, cy: Float, s: Float, color: Int) {
+        fill.color = color
+        path.reset()
+        path.moveTo(cx, cy - s * 0.42f); path.lineTo(cx + s * 0.32f, cy)
+        path.lineTo(cx, cy + s * 0.42f); path.lineTo(cx - s * 0.32f, cy)
+        path.close(); canvas.drawPath(path, fill)
     }
 
     private fun drawCreature(canvas: Canvas, cx: Float, cy: Float, s: Float, body: Int, ink: Int) {

@@ -25,7 +25,8 @@ class Ruleset(
     val props: List<Set<Prop>>,
     val transformRules: List<Rule>,
     val hasRules: List<Rule>,
-    val makeRules: List<Rule>
+    val makeRules: List<Rule>,
+    val eatRules: List<Rule>
 ) {
     val hasYou: Boolean = props.any { Prop.YOU in it }
 
@@ -34,7 +35,7 @@ class Ruleset(
     fun ruleSignature(): String = rules.map { it.signature() }.sorted().joinToString(";")
 
     companion object {
-        val EMPTY = Ruleset(emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
+        val EMPTY = Ruleset(emptyList(), emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
     }
 }
 
@@ -64,13 +65,14 @@ object Rules {
             ruleCache[key] = cached
         }
         val rules = cached
-        if (rules.isEmpty()) return Ruleset(emptyList(), List(state.items.size) { emptySet() }, emptyList(), emptyList(), emptyList())
+        if (rules.isEmpty()) return Ruleset(emptyList(), List(state.items.size) { emptySet() }, emptyList(), emptyList(), emptyList(), emptyList())
 
         val props = Array(state.items.size) { HashSet<Prop>() }
         val negProps = Array(state.items.size) { HashSet<Prop>() }
         val transformRules = ArrayList<Rule>()
         val hasRules = ArrayList<Rule>()
         val makeRules = ArrayList<Rule>()
+        val eatRules = ArrayList<Rule>()
 
         for (rule in rules) {
             when (rule.verb) {
@@ -95,6 +97,7 @@ object Rules {
                 }
                 Word.HAS -> if (rule.objects.any { it.kind == WordKind.NOUN }) hasRules.add(rule)
                 Word.MAKE -> if (rule.objects.any { it.kind == WordKind.NOUN }) makeRules.add(rule)
+                Word.EAT -> if (rule.objects.any { it.kind == WordKind.NOUN }) eatRules.add(rule)
                 else -> {}
             }
         }
@@ -106,7 +109,7 @@ object Rules {
             finalProps.add(if (p.isEmpty()) emptySet() else p.toSet())
         }
 
-        return Ruleset(rules, finalProps, transformRules, hasRules, makeRules)
+        return Ruleset(rules, finalProps, transformRules, hasRules, makeRules, eatRules)
     }
 
     /** True when the sentence's ON / FACING qualifier is satisfied for this item. */

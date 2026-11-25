@@ -31,6 +31,31 @@ enum class Word(val label: String, val kind: WordKind) {
     MOON("MOON", WordKind.NOUN),
     TEXT("TEXT", WordKind.NOUN),
 
+    GEM("GEM", WordKind.NOUN),
+    COIN("COIN", WordKind.NOUN),
+    SKULL("SKULL", WordKind.NOUN),
+    BOMB("BOMB", WordKind.NOUN),
+    CLOUD("CLOUD", WordKind.NOUN),
+    SUN("SUN", WordKind.NOUN),
+    BIRD("BIRD", WordKind.NOUN),
+    FISH("FISH", WordKind.NOUN),
+    SNAKE("SNAKE", WordKind.NOUN),
+    JELLY("JELLY", WordKind.NOUN),
+    ROBOT("ROBOT", WordKind.NOUN),
+    CUP("CUP", WordKind.NOUN),
+    BOOK("BOOK", WordKind.NOUN),
+    LADDER("LADDER", WordKind.NOUN),
+    GATE("GATE", WordKind.NOUN),
+    PORTAL("PORTAL", WordKind.NOUN),
+    CRYSTAL("CRYSTAL", WordKind.NOUN),
+    BONE("BONE", WordKind.NOUN),
+    CROWN("CROWN", WordKind.NOUN),
+    POTION("POTION", WordKind.NOUN),
+    MUD("MUD", WordKind.NOUN),
+    SAND("SAND", WordKind.NOUN),
+    EYE("EYE", WordKind.NOUN),
+    HAND("HAND", WordKind.NOUN),
+
     // ---- properties ----
     YOU("YOU", WordKind.PROP),
     WIN("WIN", WordKind.PROP),
@@ -44,11 +69,20 @@ enum class Word(val label: String, val kind: WordKind) {
     SHIFT("SHIFT", WordKind.PROP),
     TELE("TELE", WordKind.PROP),
     FLOAT("FLOAT", WordKind.PROP),
+    WEAK("WEAK", WordKind.PROP),
+    PULL("PULL", WordKind.PROP),
+    FALL("FALL", WordKind.PROP),
+    OPEN("OPEN", WordKind.PROP),
+    SHUT("SHUT", WordKind.PROP),
+    BOOM("BOOM", WordKind.PROP),
+    IDLE("IDLE", WordKind.PROP),
+    SLEEP("SLEEP", WordKind.PROP),
 
     // ---- verbs ----
     IS("IS", WordKind.VERB),
     HAS("HAS", WordKind.VERB),
     MAKE("MAKE", WordKind.VERB),
+    EAT("EAT", WordKind.VERB),
 
     // ---- operators ----
     AND("AND", WordKind.OP),
@@ -66,7 +100,8 @@ enum class Word(val label: String, val kind: WordKind) {
 
 /** The properties a rule can grant. Kept separate so the hot path uses cheap sets. */
 enum class Prop {
-    YOU, WIN, STOP, PUSH, SINK, DEFEAT, HOT, MELT, MOVE, SHIFT, TELE, FLOAT;
+    YOU, WIN, STOP, PUSH, SINK, DEFEAT, HOT, MELT, MOVE, SHIFT, TELE, FLOAT,
+    WEAK, PULL, FALL, OPEN, SHUT, BOOM, IDLE, SLEEP;
 
     companion object {
         fun of(w: Word): Prop? = when (w) {
@@ -82,6 +117,14 @@ enum class Prop {
             Word.SHIFT -> SHIFT
             Word.TELE -> TELE
             Word.FLOAT -> FLOAT
+            Word.WEAK -> WEAK
+            Word.PULL -> PULL
+            Word.FALL -> FALL
+            Word.OPEN -> OPEN
+            Word.SHUT -> SHUT
+            Word.BOOM -> BOOM
+            Word.IDLE -> IDLE
+            Word.SLEEP -> SLEEP
             else -> null
         }
     }

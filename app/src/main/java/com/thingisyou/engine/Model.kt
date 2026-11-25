@@ -169,7 +169,7 @@ class GameSession(val level: LevelDef) {
     fun stuck(): Boolean = !won && Rules.evaluate(state).hasYou.not()
 }
 
-enum class Event { RULE_CHANGED, TRANSFORM, SINK, MELT, WIN, DEFEAT, TELE }
+enum class Event { RULE_CHANGED, TRANSFORM, SINK, MELT, WIN, DEFEAT, TELE, DESTROY }
 
 /**
  * Order-independent 64-bit fingerprint of a board, used by the build-time solver.

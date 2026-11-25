@@ -58,6 +58,7 @@ object Engine {
             val p = props[i]
             if (Prop.YOU in p) continue
             if (Prop.MOVE !in p && Prop.SHIFT !in p) continue
+            if (Prop.SLEEP in p || Prop.IDLE in p) continue
             val d = items[i].dir
             if (d == Dir.NONE) continue
             val local = LinkedHashSet<Int>()
@@ -70,6 +71,19 @@ object Engine {
             }
         }
 
+        // ---------- 1c. FALL ----------
+        // Only pay for this when something can actually fall.
+        val rsFall = if (rs0.props.any { Prop.FALL in it }) Rules.evaluate(State(state.w, state.h, items))
+                     else null
+        if (rsFall != null) for (i in items.indices) {
+            if (Prop.FALL !in rsFall!!.props[i]) continue
+            val it = items[i]
+            val ny = it.y + 1
+            if (ny >= state.h) continue
+            if (items.any { o -> o.x == it.x && o.y == ny }) continue
+            items[i] = it.copy(y = ny, dir = Dir.DOWN)
+        }
+
         var cur = State(state.w, state.h, items)
 
         // ---------- 2. transformations ----------
@@ -78,6 +92,65 @@ object Engine {
         if (didTransform) {
             events.add(Event.TRANSFORM)
             cur = cur.copy(items = afterTransform)
+        }
+
+        // ---------- 2b. eating, opening, weakness, explosions ----------
+        // Skip the whole pass unless some rule can actually destroy something here.
+        val needsDestroy = rs1.eatRules.isNotEmpty() ||
+            rs1.props.any { p -> Prop.OPEN in p || Prop.SHUT in p || Prop.WEAK in p || Prop.BOOM in p }
+        val dead = HashSet<Int>()
+        if (needsDestroy) {
+        val rsD = rs1
+
+        for (r in rsD.eatRules) {
+            for (i in cur.items.indices) {
+                val a = cur.items[i]
+                if (r.subjects.none { State.matches(a, it) }) continue
+                for (j in cur.items.indices) {
+                    if (i == j) continue
+                    val b = cur.items[j]
+                    if (b.x != a.x || b.y != a.y) continue
+                    if (r.objects.any { o -> o.kind == WordKind.NOUN && State.matches(b, o) }) dead.add(j)
+                }
+            }
+        }
+
+        for (y in 0 until cur.h) for (x in 0 until cur.w) {
+            val cell = cur.itemsAt(x, y)
+            if (cell.size < 2) continue
+            // OPEN against SHUT: both give way
+            val opens = cell.filter { Prop.OPEN in rsD.props[it] }
+            val shuts = cell.filter { Prop.SHUT in rsD.props[it] }
+            if (opens.isNotEmpty() && shuts.isNotEmpty()) {
+                dead.addAll(opens); dead.addAll(shuts)
+            }
+            // WEAK is broken by anything that is not itself WEAK
+            val weak = cell.filter { Prop.WEAK in rsD.props[it] }
+            if (weak.isNotEmpty() && cell.any { Prop.WEAK !in rsD.props[it] }) dead.addAll(weak)
+        }
+
+        // BOOM chains: anything destroyed with BOOM takes its neighbours with it
+        val queue = ArrayDeque<Int>()
+        queue.addAll(dead)
+        val blown = HashSet<Int>()
+        while (queue.isNotEmpty()) {
+            val i = queue.removeFirst()
+            if (!blown.add(i)) continue
+            if (Prop.BOOM !in rsD.props[i]) continue
+            val it = cur.items[i]
+            for (j in cur.items.indices) {
+                if (j in dead) continue
+                val o = cur.items[j]
+                if (Math.abs(o.x - it.x) <= 1 && Math.abs(o.y - it.y) <= 1) {
+                    dead.add(j); queue.add(j)
+                }
+            }
+        }
+
+        if (dead.isNotEmpty()) {
+            events.add(Event.DESTROY)
+            cur = cur.copy(items = removeDead(cur.items, dead, rsD))
+        }
         }
 
         // ---------- 3. sink ----------
