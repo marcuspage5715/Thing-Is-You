@@ -102,45 +102,38 @@ Word tiles themselves are always pushable, and are never the noun they spell.
 
 ## Levels
 
-Thirty-three puzzles, in order. Each unlocks when the one before it is solved.
+Twenty-two puzzles, in order. Each unlocks when the one before it is solved.
 
-| # | Name | Teaches |
+**No level ever starts with a WIN rule in place.** That is the design rule this set is built
+on: if `FLAG IS WIN` is already sitting on the board, the level is a walk, not a puzzle. In
+every level here you have to build the winning sentence yourself — bring scattered words
+into one line, work out which object can actually be reached, or rewrite what the player is.
+`tools/Difficulty.kt` fails the build if any level ever hands the answer over.
+
+| # | Name | The problem |
 | --- | --- | --- |
-| 01 | First Steps | Moving and touching the goal |
-| 02 | Break The Wall | Pushing a word out of a sentence |
-| 03 | Push Comes To Shove | PUSH objects |
-| 04 | Build A Rule | Completing a half-written sentence |
-| 05 | Float Your Boat | `AND`, and crossing water |
-| 06 | Metamorphosis | Transformations |
-| 07 | Stay On The Path | The `ON` modifier |
-| 08 | Face The Music | The `FACING` modifier |
-| 09 | Sink Or Swim | SINK |
-| 10 | Fire And Ice | HOT and MELT |
-| 11 | Left Behind | HAS |
-| 12 | Who Are You | `YOU` on something other than THING |
-| 13 | Wordplay | `TEXT IS YOU` |
-| 14 | Doorways | TELE |
-| 15 | Mind The Gap | DEFEAT |
-| 16 | Frozen | `A IS A` |
-| 17 | Moving Parts | MOVE objects |
-| 18 | Fireproof | `NOT` used to cancel a property |
-| 19 | Making Things | MAKE |
-| 20 | Follow The Leader | SHIFT |
-| 21 | Two Ways | Two things YOU at once, one of them STOP |
-| 22 | The Long Push | Pushing in a corridor |
-| 23 | Mirror Image | PUSH that is also STOP |
-| 24 | Half A Rule | Joining two sentence fragments |
-| 25 | Sinking Feeling | Choosing which water to clear |
-| 26 | Hot Pursuit | Pushing a DEFEAT hazard |
-| 27 | Copycat | `PIP IS ROCK` rewriting an object |
-| 28 | Elevator | `ON` attached to the player |
-| 29 | Crossing | SINK and TELE together |
-| 30 | Wall Pusher | `WALL IS PUSH` |
-| 31 | The Shelf | Moving a blocker off a gap |
-| 32 | Double Trouble | Two-object push chain |
-| 33 | Finale | Break a rule, transform, win |
-
----
+| 01 | Assembly Required | Nothing says FLAG is WIN. Line the words up. |
+| 02 | The Wrong Flag | There is no flag on the board. Pick a different goal. |
+| 03 | Become The Goal | You do not have to go anywhere — make yourself the goal. |
+| 04 | Not Quite | A NOT sits inside the sentence. Remove it and close the gap. |
+| 05 | Two Halves | Both halves are in one row; push them together. |
+| 06 | Cornered | The words are jammed against the edge. Push up the column. |
+| 07 | Break The Wall | The flag is STOP, so you cannot enter it. Change what FLAG is. |
+| 08 | Deep Water | You sink. Make yourself able to cross. |
+| 09 | Sink Or Swim | One rock clears one tile of water. Then finish the sentence. |
+| 10 | Fire And Ice | Melt the ice, then build above it. |
+| 11 | Left Behind | HAS leaves something behind. Sink the rock and look. |
+| 12 | Who Are You | You are not the thing you think you are. |
+| 13 | Wordplay | You drive the words themselves. |
+| 14 | Doorways | The flag is sealed in; the door is the only way. |
+| 15 | Mind The Gap | Build the sentence, then cross without touching lava. |
+| 16 | Frozen | ROCK IS ROCK freezes rocks. Break it, then finish the other sentence. |
+| 17 | Moving Parts | You are sealed in. Let the moving rock do the work. |
+| 18 | Fireproof | You are MELT and the lava is HOT. Cancel that, then build. |
+| 19 | Making Things | MAKE turns a destroyed thing into something else. |
+| 20 | Wrong Way Round | FLAG IS LAVA, and there is no flag. Give the goal to something else. |
+| 21 | Copy | ROCK IS FLAG already works. It still needs something worth reaching. |
+| 22 | Finale | Break a rule, rewrite an object, finish the sentence. |
 
 ## How the puzzles were checked
 
@@ -154,6 +147,8 @@ during development.
   through the real engine, so a reported solution is a witness rather than a guess.
 - `tools/Lint.kt` — checks that no level draws walls as scenery without a rule making them
   STOP, which would let the player walk straight through them.
+- `tools/Difficulty.kt` — checks that no level starts with a WIN rule already in place, and
+  reports the solution length of each puzzle.
 
 Run them with a JDK and the Kotlin command line compiler:
 
@@ -163,6 +158,7 @@ E=app/src/main/java/com/thingisyou/engine/*.kt
 kotlinc $E tools/Solver.kt tools/Tests.kt -include-runtime -d tests.jar && java -jar tests.jar
 kotlinc $E tools/Solver.kt tools/Verify.kt -include-runtime -d verify.jar && java -jar verify.jar
 kotlinc $E tools/Lint.kt -include-runtime -d lint.jar && java -jar lint.jar
+kotlinc $E tools/Solver.kt tools/Difficulty.kt -include-runtime -d diff.jar && java -jar diff.jar
 ```
 
 The Android sources were additionally type-checked outside Gradle against the platform
@@ -179,7 +175,7 @@ app/src/main/java/com/thingisyou/
     Model.kt       board state, level text parser, game session, undo history
     Rules.kt       sentence parser and per-object property resolution
     Engine.kt      one turn: movement, pushes, transforms, sink, melt, teleport, win
-    Levels.kt      the thirty-three puzzles
+    Levels.kt      the twenty-two puzzles
   MainActivity.kt         title screen, PLAY / LEVELS / EXIT
   LevelSelectActivity.kt  grid of puzzles, locked until reached
   GameActivity.kt         one puzzle, arrow pad, and the end-of-level overlay
@@ -187,7 +183,7 @@ app/src/main/java/com/thingisyou/
   Sfx.kt                  one-shot sound effects
   Progress.kt             solved-level tracking
   Levels_order.kt         unlocking order and next-level lookup
-tools/                    tests, solver, verifier, wall lint (not shipped)
+tools/                    tests, solver, verifier, wall lint, difficulty audit (not shipped)
 ```
 
 ---
@@ -196,4 +192,4 @@ tools/                    tests, solver, verifier, wall lint (not shipped)
 
 Inspired by the rule-manipulation puzzle genre popularised by *Baba Is You* (Hempuli Oy).
 This is an independent implementation: no assets, code, or levels from that game are used,
-and all thirty-three puzzles were designed and machine-verified for this project.
+and all twenty-two puzzles were designed and machine-verified for this project.
